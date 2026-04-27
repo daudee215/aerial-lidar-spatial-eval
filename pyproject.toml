@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aerial-lidar-spatial-eval"
+version = "0.1.0"
+description = "Distance-weighted, spatially-aware evaluation metrics for aerial LiDAR semantic segmentation"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [{ name = "Daud Tasleem", email = "daudtasleem215@gmail.com" }]
+keywords = ["lidar", "geospatial", "evaluation", "semantic-segmentation", "point-cloud", "remote-sensing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.11",
+    "laspy>=2.5",
+    "matplotlib>=3.7",
+    "tqdm>=4.65",
+    "typing-extensions>=4.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-benchmark>=4.0",
+    "ruff>=0.4",
+    "mypy>=1.8",
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/daudee215/aerial-lidar-spatial-eval"
+Repository = "https://github.com/daudee215/aerial-lidar-spatial-eval"
+Issues = "https://github.com/daudee215/aerial-lidar-spatial-eval/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aerial_lidar_spatial_eval"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "C4", "SIM"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

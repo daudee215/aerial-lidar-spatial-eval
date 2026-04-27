@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Tasleem
+    given-names: Daud
+    email: daudtasleem215@gmail.com
+title: "aerial-lidar-spatial-eval: Distance-weighted spatially-aware evaluation metrics for aerial LiDAR semantic segmentation"
+version: 0.1.0
+date-released: "2026-04-27"
+url: "https://github.com/daudee215/aerial-lidar-spatial-eval"
+license: Apache-2.0
+references:
+  - type: article
+    authors:
+      - name: "Anonymous"
+    title: "Spatially-Aware Evaluation Framework for Aerial LiDAR Point Cloud Semantic Segmentation: Distance-Based Metrics on Challenging Regions"
+    year: 2026
+    url: "https://arxiv.org/abs/2603.22420"
