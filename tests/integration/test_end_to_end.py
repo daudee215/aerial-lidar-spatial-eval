@@ -7,19 +7,17 @@ reported in Tables 1-3 of arXiv:2603.22420 for a simplified equivalent.
 """
 
 import json
-import os
 import tempfile
 
 import numpy as np
 import pytest
 
 from aerial_lidar_spatial_eval import (
-    SpatialEvaluator,
     HardPointDetector,
+    SpatialEvaluator,
     generate_report,
 )
 from aerial_lidar_spatial_eval.io import generate_synthetic_las
-
 
 N_CLASSES = 5
 CLASS_NAMES = ["ground", "low_veg", "medium_veg", "high_veg", "building"]
@@ -27,7 +25,9 @@ CLASS_NAMES = ["ground", "low_veg", "medium_veg", "high_veg", "building"]
 
 @pytest.fixture(scope="module")
 def synthetic_dataset():
-    xyz, true, pred1 = generate_synthetic_las(20_000, n_classes=N_CLASSES, noise_fraction=0.12, seed=0)
+    xyz, true, pred1 = generate_synthetic_las(
+        20_000, n_classes=N_CLASSES, noise_fraction=0.12, seed=0
+    )
     _, _, pred2 = generate_synthetic_las(20_000, n_classes=N_CLASSES, noise_fraction=0.15, seed=1)
     return xyz, true, pred1, pred2
 

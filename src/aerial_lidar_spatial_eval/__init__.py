@@ -25,13 +25,13 @@ References
 - FRACTAL dataset   https://github.com/IGNF/FRACTAL
 """
 
-from aerial_lidar_spatial_eval.metrics import (
-    SpatialEvaluator,
-    DistanceWeightedConfusionMatrix,
-    SpatiallyStratifiedIoU,
-    HardPointDetector,
-)
 from aerial_lidar_spatial_eval.io import load_las_predictions
+from aerial_lidar_spatial_eval.metrics import (
+    DistanceWeightedConfusionMatrix,
+    HardPointDetector,
+    SpatialEvaluator,
+    SpatiallyStratifiedIoU,
+)
 from aerial_lidar_spatial_eval.report import generate_report
 
 __all__ = [

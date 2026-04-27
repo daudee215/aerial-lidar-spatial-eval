@@ -8,9 +8,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
+import numpy as np
 
 from aerial_lidar_spatial_eval.metrics import EvalResult
 
@@ -57,12 +56,12 @@ def generate_report(
         "miou": round(result.miou, 6),
         "per_class_iou": {
             name: round(float(iou), 6)
-            for name, iou in zip(result.class_names, result.per_class_iou)
+            for name, iou in zip(result.class_names, result.per_class_iou, strict=False)
             if not np.isnan(iou)
         },
         "mean_distance_error_m": {
             name: round(float(d), 4)
-            for name, d in zip(result.class_names, mde)
+            for name, d in zip(result.class_names, mde, strict=False)
         },
         "spatially_stratified_miou": {
             f"band_{i}": round(float(m), 6)
@@ -129,7 +128,7 @@ def _plot_stratified_iou(result: EvalResult, path: Path, model_name: str) -> Non
     ax.set_ylabel("Mean IoU")
     ax.set_ylim(0, 1)
     ax.set_title(f"{model_name} — Spatially Stratified mIoU by Distance to Boundary")
-    for bar, count in zip(bars, counts):
+    for bar, count in zip(bars, counts, strict=False):
         ax.text(
             bar.get_x() + bar.get_width() / 2,
             bar.get_height() + 0.01,

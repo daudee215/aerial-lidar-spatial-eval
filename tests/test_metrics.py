@@ -2,7 +2,6 @@
 # Copyright 2026 Daud Tasleem
 """Unit tests for aerial_lidar_spatial_eval.metrics."""
 
-import math
 import numpy as np
 import pytest
 
@@ -13,7 +12,6 @@ from aerial_lidar_spatial_eval.metrics import (
     SpatialEvaluator,
     SpatiallyStratifiedIoU,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -191,7 +189,9 @@ class TestSpatialEvaluator:
 
     def test_summary_string_nonempty(self, noisy_predictions):
         xyz, true, pred = noisy_predictions
-        ev = SpatialEvaluator(n_classes=3, class_names=["ground", "vegetation", "building"], verbose=False)
+        ev = SpatialEvaluator(
+            n_classes=3, class_names=["ground", "vegetation", "building"], verbose=False
+        )
         result = ev.evaluate(xyz, true, pred)
         s = result.summary()
         assert len(s) > 100

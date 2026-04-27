@@ -10,7 +10,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 try:
-    import laspy
+    import laspy  # type: ignore[import-untyped]
     _HAS_LASPY = True
 except ImportError:
     _HAS_LASPY = False

@@ -5,7 +5,6 @@ Benchmark: throughput (points/second) for distance-weighted metrics.
 Run with:  pytest tests/test_benchmark.py --benchmark-only
 """
 
-import numpy as np
 import pytest
 
 from aerial_lidar_spatial_eval.io import generate_synthetic_las
@@ -35,7 +34,7 @@ def _run_stratified_iou(xyz, true, pred):
 
 def test_dwcm_throughput(benchmark, large_dataset):
     xyz, true, pred = large_dataset
-    result = benchmark(_run_dwcm, xyz, true, pred)
+    benchmark(_run_dwcm, xyz, true, pred)
     n = len(xyz)
     rate = n / benchmark.stats["mean"]
     print(f"\nDWCM throughput: {rate/1e6:.2f} M pts/s")
@@ -43,7 +42,7 @@ def test_dwcm_throughput(benchmark, large_dataset):
 
 def test_stratified_iou_throughput(benchmark, large_dataset):
     xyz, true, pred = large_dataset
-    result = benchmark(_run_stratified_iou, xyz, true, pred)
+    benchmark(_run_stratified_iou, xyz, true, pred)
     n = len(xyz)
     rate = n / benchmark.stats["mean"]
     print(f"\nStratified IoU throughput: {rate/1e6:.2f} M pts/s")

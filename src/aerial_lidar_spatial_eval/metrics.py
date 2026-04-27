@@ -11,14 +11,13 @@ pred_labels) so callers can use any I/O backend.  For LAS/LAZ files use
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from dataclasses import dataclass, field
-from typing import Iterator
 
 import numpy as np
 from numpy.typing import NDArray
 from scipy.spatial import KDTree
 from tqdm import tqdm
-
 
 # ---------------------------------------------------------------------------
 # Internal helpers
@@ -81,7 +80,7 @@ class DistanceWeightedConfusionMatrix:
         xyz: NDArray[np.float64],
         true_labels: NDArray[np.int32],
         pred_labels: NDArray[np.int32],
-    ) -> "DistanceWeightedConfusionMatrix":
+    ) -> DistanceWeightedConfusionMatrix:
         """
         Build the distance-weighted confusion matrix.
 
@@ -105,7 +104,7 @@ class DistanceWeightedConfusionMatrix:
         self
         """
         _validate_inputs(xyz, true_labels, pred_labels)
-        n = len(xyz)
+        len(xyz)
 
         # Reset
         self._matrix[:] = 0.0
@@ -143,14 +142,27 @@ class DistanceWeightedConfusionMatrix:
 
             for c in unique_true:
                 c_mask = chunk_true == c
-                if class_trees[c] is None:
-                    dist_cache[c] = np.zeros(np.sum(c_mask), dtype=np.float64)
+                tree = class_trees[c]
+                if tree is None:
+                    dist_cache[c] = np.zeros(int(np.sum(c_mask)), dtype=np.float64)
                     continue
-                dists, _ = class_trees[c].query(chunk_xyz[c_mask], workers=-1)
+                # Use k=2 to handle self-hits (point is in its own GT class tree
+                # when GT and prediction share the same XYZ array). Take the
+                # smallest nonzero distance; fall back to 0 if truly isolated.
+                k = min(2, tree.n)
+                dists_k, _ = tree.query(chunk_xyz[c_mask], k=k, workers=-1)
+                dists_k_arr: NDArray[np.float64] = np.asarray(dists_k, dtype=np.float64)
+                if k == 1:
+                    dists = dists_k_arr.ravel()
+                else:
+                    # dists_k shape (m, 2): col0 may be 0 (self), col1 is next
+                    col0 = dists_k_arr[:, 0]
+                    col1 = dists_k_arr[:, 1]
+                    dists = np.where(col0 < 1e-9, col1, col0)  # type: ignore[assignment]
                 dist_cache[c] = dists.astype(np.float64)
 
             # Accumulate into matrix
-            for i, (t, p) in enumerate(zip(chunk_true, chunk_pred)):
+            for i, (t, p) in enumerate(zip(chunk_true, chunk_pred, strict=False)):
                 # Find position of this point within its true-class group
                 c_positions = np.where(chunk_true[:i+1] == t)[0]
                 pos = len(c_positions) - 1
@@ -226,7 +238,7 @@ class SpatiallyStratifiedIoU:
         xyz: NDArray[np.float64],
         true_labels: NDArray[np.int32],
         pred_labels: NDArray[np.int32],
-    ) -> "SpatiallyStratifiedIoU":
+    ) -> SpatiallyStratifiedIoU:
         """Compute spatially stratified IoU."""
         _validate_inputs(xyz, true_labels, pred_labels)
         n = len(xyz)
@@ -342,7 +354,7 @@ class HardPointDetector:
         self,
         true_labels: NDArray[np.int32],
         predictions: list[NDArray[np.int32]],
-    ) -> "HardPointDetector":
+    ) -> HardPointDetector:
         """
         Compute hard-point mask from multiple model predictions.
 
@@ -437,7 +449,7 @@ class SpatialEvaluator:
         xyz: NDArray[np.float64],
         true_labels: NDArray[np.int32],
         pred_labels: NDArray[np.int32],
-    ) -> "EvalResult":
+    ) -> EvalResult:
         """
         Run all spatial metrics and return a structured result.
 
@@ -498,7 +510,7 @@ class EvalResult:
             "",
             "Per-class IoU (standard):",
         ]
-        for i, (name, iou) in enumerate(zip(self.class_names, self.per_class_iou)):
+        for _i, (name, iou) in enumerate(zip(self.class_names, self.per_class_iou, strict=False)):
             lines.append(f"  {name:<20s} {iou:.4f}")
         lines += [
             "",
@@ -508,7 +520,7 @@ class EvalResult:
         for i, (miou_b, count) in enumerate(
             zip(
                 self.stratified_iou.mean_iou_per_band(),
-                self.stratified_iou.band_point_counts,
+                self.stratified_iou.band_point_counts, strict=False,
             )
         ):
             lo = bands[i]
@@ -520,6 +532,6 @@ class EvalResult:
             "Mean distance error per class (misclassified points only, metres):",
         ]
         mde = self.dw_confusion.mean_distance_error()
-        for name, d in zip(self.class_names, mde):
+        for name, d in zip(self.class_names, mde, strict=False):
             lines.append(f"  {name:<20s} {d:.3f} m")
         return "\n".join(lines)

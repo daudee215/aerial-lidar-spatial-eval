@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Daud Tasleem
 """Shared pytest fixtures loading the committed reference dataset."""
+from pathlib import Path
+
 import numpy as np
 import pytest
-from pathlib import Path
 
 DATA_DIR = Path(__file__).parent / "data"
 
