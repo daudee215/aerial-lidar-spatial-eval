@@ -12,7 +12,7 @@ Distance-weighted, spatially-aware evaluation metrics for aerial LiDAR semantic 
 ## What it does
 
 `aerial-lidar-spatial-eval` implements the evaluation framework from
-[arXiv:2603.22420](https://arxiv.org/abs/2603.22420) — the first systematic
+[arXiv:2603.22420](https://arxiv.org/abs/2603.22420) - the first systematic
 spatially-aware metric suite for aerial LiDAR point cloud semantic segmentation:
 
 | Metric | Description |
@@ -26,7 +26,7 @@ spatially-aware metric suite for aerial LiDAR point cloud semantic segmentation:
 
 ## Why this exists
 
-Standard metrics — mIoU and Overall Accuracy — treat every misclassified point
+Standard metrics - mIoU and Overall Accuracy - treat every misclassified point
 identically regardless of where it sits in 3-D space. A point misclassified
 **1 cm** from a class boundary is weighted the same as one misclassified
 **20 m** into the wrong region.
@@ -36,17 +36,17 @@ This matters for aerial LiDAR applications:
 - **Digital Terrain Models** derived from segmented point clouds inherit systematic
   boundary errors that mIoU is blind to.
 - **Urban mapping** quality degrades at rooftop edges, vegetation-ground transitions,
-  and façade–ground boundaries — precisely the regions standard metrics dilute.
+  and façade-ground boundaries - precisely the regions standard metrics dilute.
 
 **Source signals that define this gap:**
 
-1. [arXiv:2603.22420](https://arxiv.org/abs/2603.22420) — Proposes distance-based
+1. [arXiv:2603.22420](https://arxiv.org/abs/2603.22420) - Proposes distance-based
    metrics; no code released. Validated on DALES, FRACTAL, Tracasa-PNA20 across
    KPConv, RandLA-Net, PTv3.
-2. [arXiv:2603.22229](https://arxiv.org/abs/2603.22229) — Benchmarks models on
+2. [arXiv:2603.22229](https://arxiv.org/abs/2603.22229) - Benchmarks models on
    large-scale operational ALS data; uses only standard metrics and explicitly
    identifies their limitations.
-3. [IGNF/myria3d](https://github.com/IGNF/myria3d) — Leading Python library for
+3. [IGNF/myria3d](https://github.com/IGNF/myria3d) - Leading Python library for
    aerial LiDAR segmentation; evaluation module uses `torchmetrics` exclusively
    (no spatial-awareness).
 
